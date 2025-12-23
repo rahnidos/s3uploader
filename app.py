@@ -1,4 +1,4 @@
-from flask import Flask, request, session, redirect, url_for
+from flask import Flask, request, session, redirect, url_for, render_template
 import oci
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -116,19 +116,14 @@ limiter = Limiter(
     key_func=get_remote_address,
     app=app,
     storage_uri=os.getenv('RATELIMIT_STORAGE_URI', 'memory://'),  # use redis://... in prod
-    default_limits=[]  # no global limits — apply per-route
+    default_limits=[]  
 )
 
 @app.route('/', methods=['GET'])
 def index():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    return '''
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file" multiple>
-        <button>Upload</button>
-    </form>
-    '''
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
@@ -170,12 +165,7 @@ def login():
 
         return 'Błędne hasło', 403
 
-    return '''
-    <form method="post">
-        <input type="password" name="pass" placeholder="hasło">
-        <button>Zaloguj</button>
-    </form>
-    '''
+    return render_template('login.html')
 
 
 @app.route('/', methods=['POST'])
@@ -200,7 +190,7 @@ def upload():
         )
         print(respobj)
         url = f'https://{DOMAIN}/{file.filename}'
-        return f'<h1>OK: {url}</h1><a href="{url}">Link</a>'
+        return render_template('success.html', url=url)
     except Exception as e:
         return f'Błąd: {e}', 500
 

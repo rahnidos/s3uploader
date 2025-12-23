@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCI Uploader - Sukces</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="upload-container">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="success-icon mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h1 class="text-success mb-3">Sukces!</h1>
+                    <p class="lead mb-4">Plik został wgrany do OCI Object Storage</p>
+                    
+                    <div class="url-box mb-4">
+                        <p class="text-muted mb-2">Link do pliku:</p>
+                        <input type="text" class="form-control form-control-lg" value="{{ url }}" readonly id="urlInput">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ url }}" class="btn btn-success btn-lg" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Otwórz plik
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-left"></i> Wgraj kolejny
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>
