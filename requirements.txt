@@ -1,3 +1,4 @@
 Flask
-dotenv
+python-dotenv
 oci
+flask-limiter
