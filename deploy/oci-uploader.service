@@ -1,0 +1,35 @@
+# Example systemd service for OCI Uploader
+# Place this file as /etc/systemd/system/oci-uploader.service and adapt paths/user.
+
+[Unit]
+Description=OCI Uploader Flask app
+After=network.target
+
+[Service]
+# Run as a non-root user
+User=www-data
+Group=www-data
+
+# Working directory where your app repo is located
+WorkingDirectory=/srv/oci-uploader
+
+# Load environment variables (optional). Create this file with your .env content or point to your .env path.
+EnvironmentFile=/srv/oci-uploader/.env
+
+# Recommended: run via gunicorn (install gunicorn in the venv)
+# ExecStart example (gunicorn):
+# ExecStart=/srv/oci-uploader/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 app:app
+
+# Simpler (less performant) alternative: run directly with Python (use virtualenv python)
+ExecStart=/srv/oci-uploader/venv/bin/python /srv/oci-uploader/app.py
+
+Restart=always
+RestartSec=5
+# Security hardening (optional)
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
