@@ -3,6 +3,7 @@ import oci
 from dotenv import load_dotenv
 from datetime import timedelta
 import hmac
+import hashlib
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import threading
@@ -141,11 +142,11 @@ def login():
 
     if request.method == 'POST':
         supplied = request.form.get('pass', '')
-        expected = os.getenv('UPLOAD_PASS', '')
+        expected_hash = os.getenv('UPLOAD_PASS', '')
         log.debug("POST /login from %s supplied_len=%d", ip, len(supplied))
-
-        if hmac.compare_digest(supplied, expected):
-            # success -> clear counter and log in
+        supplied_hash = hashlib.sha256(supplied.encode()).hexdigest()
+        if hmac.compare_digest(supplied_hash, expected_hash):
+            
             with _blacklist_lock:
                 failed_attempts.pop(ip, None)
             session.permanent = True
@@ -153,7 +154,7 @@ def login():
             log.info("Successful login from %s", ip)
             return redirect(url_for('index'))
 
-        # incorrect password -> increment counter and possibly block
+        
         need_block = False
         with _blacklist_lock:
             failed_attempts[ip] = failed_attempts.get(ip, 0) + 1
